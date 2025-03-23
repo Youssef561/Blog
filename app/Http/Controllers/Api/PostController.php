@@ -107,4 +107,25 @@ class PostController extends Controller
     }
 
 
+    public function toggleLike(Post $post)
+    {
+        $user = auth()->user();
+
+        // Check if the user has already liked the post
+        $like = $post->likes()->where('user_id', $user->id)->first();
+
+        if ($like) {
+            // If liked, remove like (unlike)
+            $like->delete();
+            return response()->json(['message' => 'Post unliked', 'likes_count' => $post->likes()->count()]);
+        } else {
+            // If not liked, add like
+            $post->likes()->create(['user_id' => $user->id]);
+            return response()->json(['message' => 'Post liked', 'likes_count' => $post->likes()->count()]);
+        }
+    }
+
+
+
+
 }
